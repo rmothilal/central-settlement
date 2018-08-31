@@ -101,7 +101,7 @@
                     "closeSettlementWindow"
                 ],
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "Settlement window closed and new window opened.",
                         "schema": {
                             "$ref": "#/definitions/SettlementWindow"

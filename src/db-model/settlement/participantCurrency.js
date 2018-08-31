@@ -23,20 +23,19 @@
  --------------
  ******/
 
-
 'use strict'
 
 const Db = require('../index')
 
-module.exports.checkParticipantAccountExists = async ({ participantId, accountId  }, enums = {}) => {
+module.exports.checkParticipantAccountExists = async ({ participantId, accountId }, enums = {}) => {
   try {
     let result = await Db.participantCurrency.query(async (builder) => {
-      return await builder
+      return builder
         .select('participantCurrencyId')
         .where({ participantId })
         .andWhere('participantCurrencyId', accountId)
     })
-      return result
+    return result
   } catch (err) {
     throw err
   }
