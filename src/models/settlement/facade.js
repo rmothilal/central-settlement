@@ -170,12 +170,13 @@ const Facade = {
                           end`))
             }, 'settlementParticipantCurrencyId')
             .transacting(trx)
-          //const settlementParticipantCurrencyIdList = await knex('settlementParticipantCurrency').select('settlementParticipantCurrencyId').where('settlementId', settlementId)
-          const settlementParticipantCurrencyIdList = await Db.settlementParticipantCurrency.find({settlementId})
-
-          const settlementParticipantCurrencyStateChangeList = settlementParticipantCurrencyIdList.map(settlementParticipantCurrencyId => {
+          const settlementParticipantCurrencyList = await knex('settlementParticipantCurrency').select('settlementParticipantCurrencyId').where('settlementId', settlementId).transacting(trx)
+          //const settlementParticipantCurrencyIdList = await Db.settlementParticipantCurrency.find({settlementId}).transacting(trx)
+          let settlementParticipantCurrencyIdList = []
+          const settlementParticipantCurrencyStateChangeList = settlementParticipantCurrencyList.map(value => {
+            settlementParticipantCurrencyIdList.push(value.settlementParticipantCurrencyId)
             return {
-              settlementParticipantCurrencyId,
+              settlementParticipantCurrencyId: value.settlementParticipantCurrencyId,
               settlementStateId: enums.settlementStates.PENDING_SETTLEMENT,
               reason,
               createdDate: transactionTimestamp
@@ -186,7 +187,7 @@ const Facade = {
           for (let index in settlementParticipantCurrencyIdList) {
             updatePromises.push
             (await knex('settlementParticipantCurrency').transacting(trx)
-              .whereIn('settlementParticipantCurrencyId', settlementParticipantCurrencyIdList)
+              .where('settlementParticipantCurrencyId', settlementParticipantCurrencyIdList[index])
               .update({
                 currentStateChangeId: settlementParticipantCurrencyStateChangeIdList[index]
               }))
