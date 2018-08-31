@@ -27,13 +27,15 @@
 
 const Db = require('../index')
 
-module.exports.create = async ({ settlementWindowId, state, reason }, enums = {}) => {
+module.exports.checkParticipantAccountExists = async ({ participantId, accountId }, enums = {}) => {
   try {
-    return await Db.settlementWindowStateChange.insert({
-      settlementWindowId,
-      settlementWindowStateId: enums[state.toUpperCase()],
-      reason
+    let result = await Db.participantCurrency.query(async (builder) => {
+      return builder
+        .select('participantCurrencyId')
+        .where({ participantId })
+        .andWhere('participantCurrencyId', accountId)
     })
+    return result
   } catch (err) {
     throw err
   }
